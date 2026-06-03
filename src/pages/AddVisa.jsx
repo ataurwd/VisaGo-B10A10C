@@ -27,7 +27,7 @@ const AddVisa = () => {
     const visaType = form.visaType.value;
     const formatHour = formatTime12Hour(selectedTime);
     const requiredDocuments = Array.from(
-      e.target.querySelectorAll("input[type='checkbox']:checked")
+      e.target.querySelectorAll("input[type='checkbox']:checked"),
     ).map((checkbox) => checkbox.nextSibling.textContent.trim());
     const ageRestriction = e.target.ageRestriction.value;
     const description = e.target.description.value;
@@ -55,7 +55,7 @@ const AddVisa = () => {
       return;
     }
 
-    fetch("https://visa-ease-server.vercel.app/add-visa", {
+    fetch("https://visago-server.vercel.app/add-visa", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

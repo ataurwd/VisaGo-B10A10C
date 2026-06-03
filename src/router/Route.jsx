@@ -12,7 +12,7 @@ import PrivateRoute from "./PrivateRoute";
 import ErrorPage from "../pages/ErrorPage";
 import VisaDetails from "../components/VisaDetails";
 import LatestVisa from "../components/LatestVisa";
-import Contact from './../pages/Contact';
+import Contact from "./../pages/Contact";
 
 const Route = () => {
   const route = createBrowserRouter([
@@ -28,8 +28,7 @@ const Route = () => {
             {
               path: "/",
               element: <LatestVisa />,
-              loader: () =>
-                fetch("https://visa-ease-server.vercel.app/add-visa"),
+              loader: () => fetch("https://visago-server.vercel.app/add-visa"),
             },
           ],
         },
@@ -52,7 +51,7 @@ const Route = () => {
         {
           path: "/all-visa",
           element: <AllVIsa />,
-          loader: () => fetch("https://visa-ease-server.vercel.app/add-visa"),
+          loader: () => fetch("https://visago-server.vercel.app/add-visa"),
         },
         {
           path: "/my-added-visa",
@@ -61,7 +60,7 @@ const Route = () => {
               <MyVisa />
             </PrivateRoute>
           ),
-          loader: () => fetch("https://visa-ease-server.vercel.app/add-visa"),
+          loader: () => fetch("https://visago-server.vercel.app/add-visa"),
         },
         {
           path: "/my-visa-application",
@@ -70,8 +69,7 @@ const Route = () => {
               <VisaApplication />
             </PrivateRoute>
           ),
-          loader: () =>
-            fetch("https://visa-ease-server.vercel.app/applied-visa"),
+          loader: () => fetch("https://visago-server.vercel.app/applied-visa"),
         },
         {
           path: "/all-visa/:id",
@@ -81,12 +79,12 @@ const Route = () => {
             </PrivateRoute>
           ),
           loader: ({ params }) =>
-            fetch(`https://visa-ease-server.vercel.app/add-visa/${params.id}`),
+            fetch(`https://visago-server.vercel.app/add-visa/${params.id}`),
         },
         {
-          path: '/contact', 
-          element: <Contact></Contact>
-        }
+          path: "/contact",
+          element: <Contact></Contact>,
+        },
       ],
     },
   ]);

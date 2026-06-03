@@ -10,13 +10,13 @@ const AllVisa = () => {
   const [sortOrder, setSortOrder] = useState("");
 
   const filteredVisas = allVisaData.filter(
-    (visa) => !filter || visa.visaType === filter
+    (visa) => !filter || visa.visaType === filter,
   );
 
   useEffect(() => {
     const fetchVisas = async () => {
       const response = await axios.get(
-        `http://localhost:5000/sorting?sortOrder=${sortOrder}`
+        `https://visago-server.vercel.app/sorting?sortOrder=${sortOrder}`,
       );
       setAllVisaData(response.data);
     };

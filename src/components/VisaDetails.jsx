@@ -45,7 +45,7 @@ const VisaDetails = () => {
       userEmail,
     };
 
-    fetch("https://visa-ease-server.vercel.app/visa", {
+    fetch("https://visago-server.vercel.app/visa", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,7 +69,7 @@ const VisaDetails = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row dark:bg-gray-900 text-gray-800 dark:text-white">
       <Helmet>
-        <title>Visa Ease | {detailsData.countryName }</title>
+        <title>Visa Ease | {detailsData.countryName}</title>
       </Helmet>
       {/* Left Side: Image */}
       <div className="w-full md:w-1/2 h-64 md:h-auto">
