@@ -2,58 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 @import "swiper/swiper-bundle.min.css";
 
-
-body {
-    font-family: 'Manrope', sans-serif;
-}
-.custom-btn{
-    padding: 5px 25px ;
-    border-radius: 8px;
-}
-html, body {
-    overflow-x: hidden; 
-    overflow-y: auto; 
-}
-
-
-body {
-    position: relative;
-    height: 100%;
+@layer base {
+  :root {
+    --brand-primary: 11 57 71;
+    --brand-gradient-start: 37 203 214;
+    --brand-gradient-end: 0 238 138;
   }
-  
-  #app { height: 100% }
-  html,
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    position: relative;
-    height: 100%;
-    background: #eee;
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    color: #000;
-    margin: 0;
-    padding: 0;
+    @apply font-sans antialiased bg-slate-50 text-slate-900;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  
+}
 
-  
-  .swiper {
-    width: 100%;
-    padding-top: 50px;
-    padding-bottom: 50px;
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-glass;
   }
-  
-  .swiper-slide {
-    background-position: center;
-    background-size: cover;
-    width: 300px;
-    height: 300px;
+
+  .btn-modern {
+    @apply px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 active:scale-95;
   }
-  
-  .swiper-slide img {
-    display: block;
+
+  .btn-primary-modern {
+    @apply btn-modern bg-primary text-white hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20;
   }
-  
+
+  .btn-gradient-modern {
+    @apply btn-modern bg-custom-gradient text-white hover:opacity-90 hover:shadow-lg hover:shadow-brand-300/30;
+  }
+}
+
+.custom-btn {
+  @apply px-6 py-2 rounded-lg;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Swiper custom overrides */
+.swiper {
+  width: 100%;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+  width: 300px;
+  height: 300px;
+  border-radius: 20px;
+  overflow: hidden;
+}

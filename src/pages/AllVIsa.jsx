@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import VisaCard from "../components/VisaCard";
+import { ThemeContext } from "../context/Theme";
+import { Filter, SortAsc, SortDesc, Search } from "lucide-react";
+import { motion } from "framer-motion";
 
 const AllVisa = () => {
   const [allVisaData, setAllVisaData] = useState([]);
   const [filter, setFilter] = useState("");
-
   const [sortOrder, setSortOrder] = useState("");
+  const { theme } = useContext(ThemeContext);
 
   const filteredVisas = allVisaData.filter(
     (visa) => !filter || visa.visaType === filter,
@@ -24,83 +27,88 @@ const AllVisa = () => {
   }, [sortOrder]);
 
   return (
-    <div>
+    <div className={`min-h-screen pb-24 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'}`}>
       <Helmet>
-        <title>Visa Ease | All Visa</title>
+        <title>All Visas | VisaGo</title>
       </Helmet>
-      <div>
-        <div className="flex flex-row md:flex-row justify-start items-center md:mt-0 mt-3">
-          <div className="w-full md:w-[20%] lg:pl-[6vw] lg:mt-10 pl-3 mb-4 md:mb-0">
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="w-full p-2 border border-primary rounded"
-            >
-              <option value="">All</option>
-              <option value="Tourist">Tourist Visa</option>
-              <option value="Student">Student Visa</option>
-              <option value="Official">Official Visa</option>
-              <option value="Business">Business Visa</option>
-              <option value="Transit">Transit Visa</option>
-            </select>
-          </div>
 
-          <div className="w-full md:w-[15%]  md:mt-10 ml-0 md:ml-2 -mt-4">
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="w-full p-2 border border-primary rounded"
-            >
-              <option value="" disabled>
-                Sort
-              </option>
-              <option value="asc">Sort By Ascending</option>
-              <option value="dsc">Sort By Descending</option>
-            </select>
-          </div>
-        </div>
+      {/* Header Section */}
+      <div className={`pt-32 pb-16 px-6 md:px-20 ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-white shadow-modern-sm'}`}>
+        <div className="max-w-7xl mx-auto">
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className={`text-4xl md:text-5xl font-extrabold mb-8 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}
+          >
+            Explore All <span className="text-brand-500">Visas</span>
+          </motion.h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 lg:w-[90%] mx-auto lg:my-10 md:my-5 my-4 lg:gap-7 gap-4 p-3">
-          {allVisaData.length > 0 ? (
-            filteredVisas.map((data) => (
-              <div
-                key={data._id}
-                className="rounded overflow-hidden shadow-lg bg-white dark:bg-gray-800"
-              >
-                <img
-                  className="w-full md:h-60 h-40 object-cover"
-                  src={data.countryImage || ""}
-                  alt={data.countryName || ""}
-                />
-                <div className="px-6 py-4">
-                  <div className="font-bold text-xl mb-2 text-gray-800 dark:text-white">
-                    {data.countryName} - {data.visaType} Visa
-                  </div>
-                  <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-2 mb-3">
-                    <li>
-                      <strong>Fee:</strong> ${data.fee}
-                    </li>
-                    <li>
-                      <strong>Validity:</strong> {data.validity}
-                    </li>
-                    <li>
-                      <strong>Application Method:</strong>{" "}
-                      {data.applicationMethod}
-                    </li>
-                  </ul>
-                  <Link
-                    to={`/all-visa/${data._id}`}
-                    className="bg-custom-gradient custom-btn text-white"
-                  >
-                    See Details
-                  </Link>
-                </div>
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-wrap gap-4 w-full md:w-auto">
+              {/* Filter */}
+              <div className="relative group min-w-[200px]">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-brand-500/20 ${
+                    theme === 'dark' 
+                      ? 'bg-slate-800 border-slate-700 text-white' 
+                      : 'bg-white border-slate-200 text-slate-600'
+                  }`}
+                >
+                  <option value="">All Visa Types</option>
+                  <option value="Tourist">Tourist Visa</option>
+                  <option value="Student">Student Visa</option>
+                  <option value="Official">Official Visa</option>
+                  <option value="Business">Business Visa</option>
+                  <option value="Transit">Transit Visa</option>
+                </select>
               </div>
-            ))
-          ) : (
-            <h1>No data found</h1>
-          )}
+
+              {/* Sort */}
+              <div className="relative group min-w-[200px]">
+                <SortAsc className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-brand-500/20 ${
+                    theme === 'dark' 
+                      ? 'bg-slate-800 border-slate-700 text-white' 
+                      : 'bg-white border-slate-200 text-slate-600'
+                  }`}
+                >
+                  <option value="" disabled>Sort by Fee</option>
+                  <option value="asc">Fee: Low to High</option>
+                  <option value="dsc">Fee: High to Low</option>
+                </select>
+              </div>
+            </div>
+
+            <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+              Showing {filteredVisas.length} available visas
+            </p>
+          </div>
         </div>
+      </div>
+
+      {/* Grid Section */}
+      <div className="max-w-7xl mx-auto px-6 md:px-20 mt-12">
+        {filteredVisas.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredVisas.map((visa) => (
+              <VisaCard key={visa._id} visa={visa} theme={theme} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-32">
+            <Search className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+              No visas found
+            </h3>
+            <p className="text-slate-500">Try adjusting your filters or search criteria.</p>
+          </div>
+        )}
       </div>
     </div>
   );

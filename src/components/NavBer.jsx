@@ -1,258 +1,189 @@
-import React, { useContext, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FormContext } from "../context/FormData";
 import { ThemeContext } from "../context/Theme";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, Sun, Moon, LogOut, User as UserIcon } from "lucide-react";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
 
 const NavBer = () => {
   const { user, logoutUser } = useContext(FormContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const signOut = () => {
     logoutUser();
     navigate("/login");
   };
+
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "All Visas", path: "/all-visa" },
+    ...(user ? [
+      { name: "Add Visa", path: "/add-visa" },
+      { name: "My Added Visas", path: "/my-added-visa" },
+      { name: "My Applications", path: "/my-visa-application" },
+    ] : []),
+    { name: "Contact", path: "/contact" },
+  ];
+
   return (
-    <div
-      className={`navbar sticky top-0 left-0 w-full z-50 md:px-20 ${
-        theme == "light"
-          ? "bg-secondary shadow-md text-black"
-          : "text-white bg-themeDatak"
-      }`}
+    <nav
+      className={cn(
+        "sticky top-0 left-0 w-full z-50 transition-all duration-300 px-4 py-3 md:px-20",
+        scrolled
+          ? "bg-white/70 backdrop-blur-lg shadow-modern-lg py-2"
+          : theme === "dark" ? "bg-themeDatak" : "bg-transparent"
+      )}
     >
-      <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />
-            </svg>
-          </div>
-          <ul
-            tabIndex={0}
-            className={`z-50 menu menu-sm dropdown-content rounded-box mt-3 w-52 p-2 shadow bg-white`}
-          >
-            <NavLink
-              to={"/"}
-              className={({ isActive }) =>
-                isActive ? "text-gray-400 " : "text-black"
-              }
-            >
-              Home
-            </NavLink>
-            {user ? (
-              <>
-                {" "}
-                <NavLink
-                  to={"/add-visa"}
-                  className={({ isActive }) =>
-                    `${isActive ? "text-gray-400" : ""} ${
-                      theme === "dark" ? "text-white" : "text-black"
-                    }`
-                  }
-                >
-                  Add Visa
-                </NavLink>
-                <NavLink
-                  to={"/my-added-visa"}
-                  className={({ isActive }) =>
-                    `${isActive ? "text-gray-400" : ""} ${
-                      theme === "dark" ? "text-white" : "text-black"
-                    }`
-                  }
-                >
-                  My added visas
-                </NavLink>
-                <NavLink
-                  to={"/my-visa-application"}
-                  className={({ isActive }) =>
-                    `${isActive ? "text-gray-400" : ""} ${
-                      theme === "dark" ? "text-white" : "text-black"
-                    }`
-                  }
-                >
-                  My Visa applications
-                </NavLink>
-              </>
-            ) : (
-              <></>
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center space-x-2">
+          <motion.span 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className={cn(
+              "text-2xl font-bold tracking-tight",
+              theme === "dark" || (scrolled && theme === "dark") ? "text-white" : "text-primary"
             )}
+          >
+            Visa<span className="text-brand-400">Go</span>
+          </motion.span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-8">
+          {navLinks.map((link) => (
             <NavLink
-              to={"/Contact"}
+              key={link.path}
+              to={link.path}
               className={({ isActive }) =>
-                isActive ? "text-gray-400 " : "text-black"
+                cn(
+                  "text-sm font-medium transition-colors hover:text-brand-500",
+                  isActive 
+                    ? "text-brand-500" 
+                    : theme === "dark" ? "text-slate-300" : "text-slate-600"
+                )
               }
             >
-              Contact
+              {link.name}
             </NavLink>
-          </ul>
+          ))}
         </div>
-        <Link to={"/"} className="font-semibold text-xl">
-          VisaGo
-        </Link>
-      </div>
-      <div className="navbar-center hidden lg:flex">
-        <ul
-          className={`menu menu-horizontal px-1 space-x-5 text-[17px] font-medium`}
-        >
-          <NavLink
-            to={"/"}
-            className={({ isActive }) =>
-              `${isActive ? "text-gray-400" : ""} ${
-                theme === "dark" ? "text-white" : "text-black"
-              }`
-            }
+
+        {/* Actions */}
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
-            Home
-          </NavLink>
-          <NavLink
-            to={"/all-visa"}
-            className={({ isActive }) =>
-              `${isActive ? "text-gray-400" : ""} ${
-                theme === "dark" ? "text-white" : "text-black"
-              }`
-            }
-          >
-            All Visas
-          </NavLink>
+            {theme === "light" ? (
+              <Moon className="w-5 h-5 text-slate-600" />
+            ) : (
+              <Sun className="w-5 h-5 text-yellow-400" />
+            )}
+          </button>
+
           {user ? (
-            <>
-              {" "}
-              <NavLink
-                to={"/add-visa"}
-                className={({ isActive }) =>
-                  `${isActive ? "text-gray-400" : ""} ${
-                    theme === "dark" ? "text-white" : "text-black"
-                  }`
-                }
-              >
-                Add Visa
-              </NavLink>
-              <NavLink
-                to={"/my-added-visa"}
-                className={({ isActive }) =>
-                  `${isActive ? "text-gray-400" : ""} ${
-                    theme === "dark" ? "text-white" : "text-black"
-                  }`
-                }
-              >
-                My added visas
-              </NavLink>
-              <NavLink
-                to={"/my-visa-application"}
-                className={({ isActive }) =>
-                  `${isActive ? "text-gray-400" : ""} ${
-                    theme === "dark" ? "text-white" : "text-black"
-                  }`
-                }
-              >
-                My Visa applications
-              </NavLink>
-            </>
-          ) : (
-            <></>
-          )}
-              <NavLink
-                to={"/contact"}
-                className={({ isActive }) =>
-                  `${isActive ? "text-gray-400" : ""} ${
-                    theme === "dark" ? "text-white" : "text-black"
-                  }`
-                }
-              >
-                Contact
-              </NavLink>
-        </ul>
-      </div>
-      <div className="navbar-end flex items-center space-x-4">
-        <button
-          onClick={toggleTheme}
-          className={`px-4 py-2 text-sm font-bold transition duration-300 rounded-md ${
-            theme === "light" ? "text-white" : "text-white bg-themeDatak"
-          }`}
-        >
-          {theme === "light" ? (
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-6 h-6"
-            >
-              <path
-                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                className="fill-sky-400/20 stroke-primary"
-              ></path>
-              <path
-                d="M12 4v1M17.66 6.344l-.828.828M20.005 12.004h-1M17.66 17.664l-.828-.828M12 20.01V19M6.34 17.664l.835-.836M3.995 12.004h1.01M6 6l.835.836"
-                className="stroke-primary"
-              ></path>
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M17.715 15.15A6.5 6.5 0 0 1 9 6.035C6.106 6.922 4 9.645 4 12.867c0 3.94 3.153 7.136 7.042 7.136 3.101 0 5.734-2.032 6.673-4.853Z"
-                className="fill-sky-400/20"
-              ></path>
-              <path
-                d="m17.715 15.15.95.316a1 1 0 0 0-1.445-1.185l.495.869ZM9 6.035l.846.534a1 1 0 0 0-1.14-1.49L9 6.035Zm8.221 8.246a5.47 5.47 0 0 1-2.72.718v2a7.47 7.47 0 0 0 3.71-.98l-.99-1.738Zm-2.72.718A5.5 5.5 0 0 1 9 9.5H7a7.5 7.5 0 0 0 7.5 7.5v-2ZM9 9.5c0-1.079.31-2.082.845-2.93L8.153 5.5A7.47 7.47 0 0 0 7 9.5h2Zm-4 3.368C5 10.089 6.815 7.75 9.292 6.99L8.706 5.08C5.397 6.094 3 9.201 3 12.867h2Zm6.042 6.136C7.718 19.003 5 16.268 5 12.867H3c0 4.48 3.588 8.136 8.042 8.136v-2Zm5.725-4.17c-.81 2.433-3.074 4.17-5.725 4.17v2c3.552 0 6.553-2.327 7.622-5.537l-1.897-.632Z"
-                className="fill-white"
-              ></path>
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M17 3a1 1 0 0 1 1 1 2 2 0 0 0 2 2 1 1 0 1 1 0 2 2 2 0 0 0-2 2 1 1 0 1 1-2 0 2 2 0 0 0-2-2 1 1 0 1 1 0-2 2 2 0 0 0 2-2 1 1 0 0 1 1-1Z"
-                className="fill-white"
-              ></path>
-            </svg>
-          )}
-        </button>
-        {user ? (
-          <div className="relative group">
-            <img
-              src={user?.photoURL}
-              className="rounded-full w-10 h-10 cursor-pointer"
-              alt="User"
-            />
-            <div className="absolute top-12 md:-left-10 -left-28 flex flex-col items-center gap-2 w-40 bg-white p-3 shadow-lg rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-              <h3 className={`text-sm font-semibold ${theme === 'dark' ? 'text-primary' : ''}`}>{user?.displayName}</h3>
-              <button
-                onClick={signOut}
-                className="px-3 py-1 bg-custom-gradient text-white rounded-md text-sm"
-              >
-                Logout
-              </button>
+            <div className="relative group">
+              <motion.img
+                whileHover={{ scale: 1.05 }}
+                src={user?.photoURL}
+                className="rounded-full w-10 h-10 cursor-pointer border-2 border-brand-200"
+                alt="User"
+              />
+              <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-modern-lg border border-slate-100 dark:border-slate-800 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                  <p className="text-sm font-semibold truncate dark:text-white">
+                    {user?.displayName}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">
+                    {user?.email}
+                  </p>
+                </div>
+                <button
+                  onClick={signOut}
+                  className="w-full flex items-center space-x-2 px-3 py-2 mt-1 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <>
-            <Link to={"/login"}>
-              <button className="px-5 bg-custom-gradient font-bold text-white py-1 rounded-md">
+          ) : (
+            <div className="hidden md:flex items-center space-x-3">
+              <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors">
                 Login
-              </button>
-            </Link>
-            <Link to={"/register"}>
-              <button className="hidden lg:block md:block px-5 bg-custom-gradient font-bold text-white py-1 rounded-md">
-                Register
-              </button>
-            </Link>
-          </>
-        )}
+              </Link>
+              <Link to="/register" className="btn-gradient-modern text-sm">
+                Get Started
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className="lg:hidden p-2 text-slate-600"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Navigation */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden mt-4 overflow-hidden bg-white dark:bg-slate-900 rounded-2xl shadow-modern-lg border border-slate-100 dark:border-slate-800"
+          >
+            <div className="flex flex-col p-4 space-y-4">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      "text-base font-medium transition-colors",
+                      isActive ? "text-brand-500" : "text-slate-600 dark:text-slate-300"
+                    )
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+              {!user && (
+                <div className="flex flex-col space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <Link to="/login" className="text-center font-semibold text-slate-600">
+                    Login
+                  </Link>
+                  <Link to="/register" className="btn-gradient-modern text-center">
+                    Register
+                  </Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
 };
 

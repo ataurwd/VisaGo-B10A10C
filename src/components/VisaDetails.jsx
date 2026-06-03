@@ -2,12 +2,17 @@ import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { useLoaderData } from "react-router-dom";
 import { FormContext } from "../context/FormData";
+import { ThemeContext } from "../context/Theme";
 import { Helmet } from "react-helmet";
+import { motion, AnimatePresence } from "framer-motion";
+import { Clock, Calendar, ShieldCheck, User, Mail, CreditCard, X } from "lucide-react";
 
 const VisaDetails = () => {
-  const [timeDate, setTimeDate] = useState(new Date());
+  const [timeDate] = useState(new Date());
   const detailsData = useLoaderData();
   const { user } = useContext(FormContext);
+  const { theme } = useContext(ThemeContext);
+
   const {
     countryImage,
     countryName,
@@ -24,11 +29,11 @@ const VisaDetails = () => {
   const handelVisaApplyForm = (e) => {
     e.preventDefault();
     const form = e.target;
-    const firstName = e.target.firstName.value;
-    const lastName = e.target.UserLastName.value;
+    const firstName = form.firstName.value;
+    const lastName = form.UserLastName.value;
     const appliedDate = timeDate.toLocaleDateString("en-CA");
-    const fee = e.target.fee.value;
-    const userEmail = e.target.email.value;
+    const fee = form.fee.value;
+    const userEmail = form.email.value;
 
     const formData = {
       countryName: detailsData?.countryName,
@@ -47,170 +52,106 @@ const VisaDetails = () => {
 
     fetch("https://visago-server.vercel.app/visa", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.insertedId) {
-          toast.success("visa added successfully");
-          const closeBtn = document.getElementById("my_modal_1");
-          closeBtn.close();
+          toast.success("Visa application submitted successfully!");
+          document.getElementById("my_modal_1").close();
         }
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        toast.error(`${errorMessage}`);
-      });
+      .catch((error) => toast.error(error.message));
   };
+
   return (
-    <div className="min-h-screen flex flex-col md:flex-row dark:bg-gray-900 text-gray-800 dark:text-white">
+    <div className={`min-h-screen py-12 px-6 md:px-20 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'}`}>
       <Helmet>
-        <title>Visa Ease | {detailsData.countryName}</title>
+        <title>VisaGo | {detailsData.countryName}</title>
       </Helmet>
-      {/* Left Side: Image */}
-      <div className="w-full md:w-1/2 h-64 md:h-auto">
-        <img
-          className="w-full h-full object-cover"
-          src={countryImage}
-          alt={`${countryName}`}
-        />
-      </div>
 
-      {/* Right Side: Details */}
-      <div className="flex flex-col justify-center p-6 md:p-12 w-full md:w-1/2">
-        <h1 className="text-4xl font-bold mb-4">{countryName}</h1>
-        <h2 className="text-2xl font-semibold mb-2">{visaType} Visa</h2>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-          {description}
-        </p>
-
-        <ul className="space-y-4 text-base">
-          <li>
-            <strong>Fee:</strong> ${fee}
-          </li>
-          <li>
-            <strong>Validity:</strong> {validity}
-          </li>
-          <li>
-            <strong>Processing Time:</strong> {formatHour}
-          </li>
-          <li>
-            <strong>Age Restriction:</strong> {ageRestriction}+
-          </li>
-          <li>
-            <strong>Application Method:</strong> {applicationMethod}
-          </li>
-        </ul>
-
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-2">Visa Type</h3>
-          <ul className="list-disc pl-6 text-gray-700 dark:text-gray-400">
-            {requiredDocuments.map((doc, index) => (
-              <li key={index}>{doc}</li>
-            ))}
-          </ul>
-        </div>
-        <button
-          onClick={() => document.getElementById("my_modal_1").showModal()}
-          className="bg-custom-gradient w-2/5 my-3 text-white py-2 rounded-xl"
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12"
+      >
+        {/* Left Side: Image */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="relative overflow-hidden rounded-3xl h-80 lg:h-auto shadow-modern-lg"
         >
-          Apply For The Visa
-        </button>
+          <img
+            className="w-full h-full object-cover"
+            src={countryImage}
+            alt={countryName}
+          />
+        </motion.div>
 
-        {/* for modal content */}
+        {/* Right Side: Details */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex flex-col justify-center"
+        >
+          <h1 className={`text-4xl md:text-5xl font-extrabold mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+            {countryName}
+          </h1>
+          <h2 className="text-2xl font-semibold mb-6 text-brand-500">{visaType} Visa</h2>
+          <p className={`text-lg mb-8 leading-relaxed ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+            {description}
+          </p>
 
-        <dialog id="my_modal_1" className="modal">
-          <div className="modal-box">
-            <form onSubmit={handelVisaApplyForm} className="space-y-4">
-              {/* email field Field */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Email</span>
-                </label>
-                <input
-                  name="email"
-                  readOnly
-                  defaultValue={user?.email}
-                  className="input input-bordered w-full"
-                />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            {[
+              { icon: <CreditCard />, label: "Fee", value: `$${fee}` },
+              { icon: <Calendar />, label: "Validity", value: validity },
+              { icon: <Clock />, label: "Processing", value: formatHour },
+              { icon: <ShieldCheck />, label: "Age Restriction", value: `${ageRestriction}+` },
+            ].map((item, i) => (
+              <div key={i} className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-white border-slate-100 text-slate-600 shadow-sm'}`}>
+                <div className="flex items-center space-x-2 text-brand-500 mb-2">{item.icon} <span className="font-bold text-slate-900 dark:text-white">{item.label}</span></div>
+                <p className="font-semibold">{item.value}</p>
               </div>
-              {/* First Name Field */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">First Name</span>
-                </label>
-                <input
-                  required
-                  type="text"
-                  name="firstName"
-                  className="input input-bordered w-full"
-                  placeholder="Enter your first name"
-                />
-              </div>
-              {/* Last Name Field */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Last Name</span>
-                </label>
-                <input
-                  required
-                  type="text"
-                  name="UserLastName"
-                  className="input input-bordered w-full"
-                  placeholder="Enter your last name"
-                />
-              </div>
-              {/* Applied Date Field */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Applied Date</span>
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  defaultValue={detailsData.validity}
-                  readOnly
-                  className="input input-bordered w-full"
-                  placeholder="Enter your last name"
-                />
-              </div>
-              {/* Fee Field */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Fee (Visa Fee)</span>
-                </label>
-                <input
-                  type="number"
-                  name="fee"
-                  readOnly
-                  value={detailsData.fee}
-                  className="input input-bordered w-full"
-                  placeholder="Enter visa fee"
-                />
-              </div>
-              {/* Submit Button */}
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="btn bg-custom-gradient text-white"
-                >
-                  Apply
-                </button>
-              </div>
-            </form>
-            <div className="modal-action">
-              <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
-                {/* <button className="btn">Close</button> */}
-              </form>
-            </div>
+            ))}
           </div>
-        </dialog>
-      </div>
+
+          <button
+            onClick={() => document.getElementById("my_modal_1").showModal()}
+            className="btn-gradient-modern w-full md:w-auto"
+          >
+            Apply For The Visa
+          </button>
+        </motion.div>
+      </motion.div>
+
+      {/* Modal */}
+      <dialog id="my_modal_1" className="modal modal-bottom sm:modal-middle">
+        <div className={`modal-box rounded-3xl ${theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-white'}`}>
+          <form method="dialog"><button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"><X /></button></form>
+          <h3 className="font-bold text-2xl mb-6">Apply for {countryName}</h3>
+          
+          <form onSubmit={handelVisaApplyForm} className="space-y-4">
+            <div className="form-control">
+              <label className="label"><span className="label-text font-medium dark:text-slate-300">Email</span></label>
+              <input name="email" readOnly defaultValue={user?.email} className={`input input-bordered w-full ${theme === 'dark' ? 'bg-slate-800' : ''}`} />
+            </div>
+            <div className="form-control">
+              <label className="label"><span className="label-text font-medium dark:text-slate-300">First Name</span></label>
+              <input required type="text" name="firstName" className={`input input-bordered w-full ${theme === 'dark' ? 'bg-slate-800' : ''}`} placeholder="Enter first name" />
+            </div>
+            <div className="form-control">
+              <label className="label"><span className="label-text font-medium dark:text-slate-300">Last Name</span></label>
+              <input required type="text" name="UserLastName" className={`input input-bordered w-full ${theme === 'dark' ? 'bg-slate-800' : ''}`} placeholder="Enter last name" />
+            </div>
+            <input type="hidden" name="fee" value={detailsData.fee} />
+            <div className="flex justify-end pt-4">
+              <button type="submit" className="btn-gradient-modern w-full">Apply Now</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
     </div>
   );
 };
