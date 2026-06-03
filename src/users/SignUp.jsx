@@ -1,16 +1,18 @@
 import React, { useContext, useState } from "react";
 import { Helmet } from "react-helmet";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock, User, Image as ImageIcon, UserPlus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { FormContext } from "../context/FormData";
 import toast from "react-hot-toast";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../firebase/firebase.init";
+import { motion } from "framer-motion";
+import { ThemeContext } from "../context/Theme";
 
 const Register = () => {
-  const [password, setPassword] = useState(false);
-  
+  const [showPassword, setShowPassword] = useState(false);
   const { handelRegisterUser, setUser } = useContext(FormContext);
+  const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
 
   const handelRegister = (e) => {
@@ -20,7 +22,6 @@ const Register = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    // password validation
     if (password.length < 6) {
       toast.error("Password should be at least 6 characters long");
       return;
@@ -40,119 +41,95 @@ const Register = () => {
 
     handelRegisterUser(email, password)
       .then((res) => {
-          toast.success("Registration successful");
-        navigate('/')
-        const profile = {
+        toast.success("Registration successful");
+        navigate('/');
+        updateProfile(auth.currentUser, {
           displayName: name,
           photoURL: photoURl,
-        }
-        updateProfile(auth.currentUser, profile)
-        setUser(res.user);
+        });
+        setUser({ ...res.user, displayName: name, photoURL: photoURl });
       })
-
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        toast.error(`${errorMessage} ${errorCode}`);
+        toast.error(error.message);
       });
   };
+
   return (
-    <div className="mx-4 mb-5">
+    <div className={`min-h-screen flex items-center justify-center px-6 py-12 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'}`}>
       <Helmet>
-        <title>Vocable | Register</title>
+        <title>Sign Up | VisaGo</title>
       </Helmet>
-      <div className="max-w-md mx-auto mb-10 mt-[5vh] space-y-6 rounded-lg border bg-white p-10 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
-        <div className="flex flex-col space-y-1">
-          <h3 className="text-3xl font-bold tracking-tight text-MainBg">
-            Register your account
-          </h3>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Please fill in the form to create an account.
-          </p>
-        </div>
-        <div>
-          <form onSubmit={handelRegister} className="space-y-6">
-            <div className="space-y-2 text-sm">
-              <label
-                className="text-sm font-medium leading-none text-zinc-700 dark:text-zinc-300"
-                htmlFor="first_name"
-              >
-                Your Name
-              </label>
-              <input
-                className="flex h-10 w-full rounded-md border px-3 py-2  focus-visible:outline-none dark:border-zinc-700"
-                id="first_name"
-                placeholder="Your Name"
-                name="name"
-                type="text"
-                required
-              />
-            </div>
-            <div className="space-y-2 text-sm">
-              <label
-                className="text-sm font-medium leading-none text-zinc-700 dark:text-zinc-300"
-                htmlFor="last_name"
-              >
-                Photo URL
-              </label>
-              <input
-                className="flex h-10 w-full rounded-md border px-3 py-2  focus-visible:outline-none dark:border-zinc-700"
-                id="last_name"
-                placeholder="Photo URL"
-                name="photo"
-                type="text"
-                required
-              />
-            </div>
-            <div className="space-y-2 text-sm">
-              <label
-                className="text-sm font-medium leading-none text-zinc-700 dark:text-zinc-300"
-                htmlFor="email"
-              >
-                Email
-              </label>
-              <input
-                autoComplete=""
-                className="flex h-10 w-full rounded-md border px-3 py-2  focus-visible:outline-none dark:border-zinc-700"
-                id="email"
-                placeholder="Enter your email"
-                name="email"
-                type="email"
-              />
-            </div>
-            <div className="space-y-2 text-sm relative">
-              <label
-                className="text-sm font-medium leading-none text-zinc-700 dark:text-zinc-300"
-                htmlFor="password_"
-              >
-                Password
-              </label>
-              <input
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus-visible:outline-none dark:border-zinc-700"
-                id="password"
-                placeholder="Enter password"
-                name="password"
-                type={password ? "text" : "password"}
-                required
-              />
-              <div onClick={() => setPassword(!password)}>
-                {password ? (
-                  <p className="absolute top-10 right-5">
-                    <FaEye size={18} />
-                  </p>
-                ) : (
-                  <p className="absolute top-10 right-5">
-                    <FaEyeSlash size={18} />
-                  </p>
-                )}
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md"
+      >
+        <div className={`rounded-3xl shadow-modern-lg p-8 md:p-10 border ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'}`}>
+          <div className="text-center mb-10">
+            <h2 className={`text-3xl font-extrabold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+              Create Account
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400">
+              Start your visa journey with us today.
+            </p>
+          </div>
+          
+          <form onSubmit={handelRegister} className="space-y-5">
+            {[
+              { name: "name", type: "text", placeholder: "Your Full Name", icon: User },
+              { name: "photo", type: "text", placeholder: "Photo URL", icon: ImageIcon },
+              { name: "email", type: "email", placeholder: "name@example.com", icon: Mail },
+            ].map((field) => (
+              <div key={field.name} className="space-y-1">
+                <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 capitalize">{field.name}</label>
+                <div className="relative group">
+                  <field.icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+                  <input
+                    name={field.name}
+                    type={field.type}
+                    required
+                    placeholder={field.placeholder}
+                    className={`w-full pl-12 pr-4 py-3 rounded-xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200'} outline-none focus:ring-2 focus:ring-brand-500/20 transition-all`}
+                  />
+                </div>
+              </div>
+            ))}
+
+            <div className="space-y-1">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Password</label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  className={`w-full pl-12 pr-12 py-3 rounded-xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200'} outline-none focus:ring-2 focus:ring-brand-500/20 transition-all`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
-            <button className="rounded-md bg-custom-gradient w-full px-4 py-2 text-white transition-colors hover:bg-primary dark:bg-primary">
-              Register
+
+            <button type="submit" className="w-full btn-gradient-modern flex items-center justify-center py-4 mt-6">
+              Create Account <UserPlus className="ml-2 w-5 h-5" />
             </button>
           </form>
+
+          <p className="text-center mt-8 text-slate-600 dark:text-slate-400">
+            Already have an account?{" "}
+            <Link to="/login" className="text-brand-500 font-extrabold hover:underline">
+              Sign In
+            </Link>
+          </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
