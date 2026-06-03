@@ -33,7 +33,7 @@ const VisaApplication = () => {
   }, [user?.email, search]);
 
   return (
-    <div className={`min-h-screen py-12 px-6 md:px-20 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'} max-w-7xl`}>
+    <div className={`min-h-screen py-12 px-6 md:px-20 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'}`}>
       <Helmet>
         <title>VisaGo | My Applications</title>
       </Helmet>

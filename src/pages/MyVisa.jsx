@@ -79,7 +79,7 @@ const MyVisa = () => {
   };
 
   return (
-    <div className={`min-h-screen py-12 px-6 md:px-20 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'}`}>
+    <div className={`min-h-screen py-12 px-6 md:px-20 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'} max-w-7xl mx-auto`}>
       <Helmet>
         <title>VisaGo | My Added Visas</title>
       </Helmet>
