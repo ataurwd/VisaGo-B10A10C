@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Eye, EyeOff, Mail, Lock, User, Image as ImageIcon, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Image as ImageIcon, UserPlus, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { FormContext } from "../context/FormData";
 import toast from "react-hot-toast";
@@ -55,19 +55,24 @@ const Register = () => {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center px-6 py-12 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'}`}>
+    <div className="min-h-screen flex lg:grid lg:grid-cols-2 bg-white dark:bg-themeDatak">
       <Helmet>
         <title>Sign Up | VisaGo</title>
       </Helmet>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className={`rounded-3xl shadow-modern-lg p-8 md:p-10 border ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'}`}>
-          <div className="text-center mb-10">
-            <h2 className={`text-3xl font-extrabold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+      {/* Form Side */}
+      <div className="w-full flex items-center justify-center p-6 md:p-12">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-full max-w-md"
+        >
+          <Link to="/" className="inline-flex items-center text-slate-500 hover:text-brand-500 mb-8 transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
+          </Link>
+
+          <div className="mb-10">
+            <h2 className={`text-4xl font-extrabold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
               Create Account
             </h2>
             <p className="text-slate-500 dark:text-slate-400">
@@ -90,7 +95,7 @@ const Register = () => {
                     type={field.type}
                     required
                     placeholder={field.placeholder}
-                    className={`w-full pl-12 pr-4 py-3 rounded-xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200'} outline-none focus:ring-2 focus:ring-brand-500/20 transition-all`}
+                    className={`w-full pl-12 pr-4 py-4 rounded-2xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200'} outline-none focus:ring-2 focus:ring-brand-500/20 transition-all`}
                   />
                 </div>
               </div>
@@ -105,7 +110,7 @@ const Register = () => {
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
-                  className={`w-full pl-12 pr-12 py-3 rounded-xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200'} outline-none focus:ring-2 focus:ring-brand-500/20 transition-all`}
+                  className={`w-full pl-12 pr-12 py-4 rounded-2xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200'} outline-none focus:ring-2 focus:ring-brand-500/20 transition-all`}
                 />
                 <button
                   type="button"
@@ -117,8 +122,8 @@ const Register = () => {
               </div>
             </div>
 
-            <button type="submit" className="w-full btn-gradient-modern flex items-center justify-center py-4 mt-6">
-              Create Account <UserPlus className="ml-2 w-5 h-5" />
+            <button type="submit" className="w-full btn-gradient-modern py-4 text-lg mt-6">
+              Create Account
             </button>
           </form>
 
@@ -130,6 +135,21 @@ const Register = () => {
           </p>
         </div>
       </motion.div>
+
+      {/* Image Side */}
+      <div className="hidden lg:block relative w-full h-full overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1542296332-2e44d1faf563?q=80&w=2070&auto=format&fit=crop"
+          alt="Travel"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-brand-900/40 backdrop-blur-[2px] flex items-center justify-center p-12">
+          <div className="text-white text-center">
+            <h1 className="text-5xl font-extrabold mb-4">Join our community.</h1>
+            <p className="text-lg opacity-90">Create your account and start your global journey today.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
