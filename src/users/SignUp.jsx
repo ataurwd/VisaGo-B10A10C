@@ -133,8 +133,9 @@ const Register = () => {
               Sign In
             </Link>
           </p>
+                </motion.div>
         </div>
-      </motion.div>
+
 
       {/* Image Side */}
       <div className="hidden lg:block relative w-full h-full overflow-hidden">

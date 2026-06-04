@@ -45,9 +45,9 @@ const Login = () => {
       </Helmet>
 
       {/* Image Side */}
-      <div className="hidden lg:block relative w-full h-full overflow-hidden">
+      <div className="lg:block relative w-full h-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1506953823976-52f1fdc03d15?q=80&w=2070&auto=format&fit=crop"
+          src="https://wanderingwagars.com/wp-content/uploads/2023/01/Places-to-visit-in-Thailand-Feature.jpg"
           alt="Travel"
           className="w-full h-full object-cover"
         />
@@ -135,7 +135,7 @@ const Login = () => {
             <Link to="/register" className="text-brand-500 font-extrabold hover:underline">Sign Up Free</Link>
           </p>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 };
