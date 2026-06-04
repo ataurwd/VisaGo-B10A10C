@@ -5,9 +5,11 @@ import VisaCard from "../components/VisaCard";
 import { ThemeContext } from "../context/Theme";
 import { Filter, SortAsc, SortDesc, Search } from "lucide-react";
 import { motion } from "framer-motion";
+import Loading from "../components/Loading";
 
 const AllVisa = () => {
   const [allVisaData, setAllVisaData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const { theme } = useContext(ThemeContext);
@@ -17,14 +19,29 @@ const AllVisa = () => {
   );
 
   useEffect(() => {
+    setLoading(true);
     const fetchVisas = async () => {
-      const response = await axios.get(
-        `https://visago-server.vercel.app/sorting?sortOrder=${sortOrder}`,
-      );
-      setAllVisaData(response.data);
+      try {
+        const response = await axios.get(
+          `https://visago-server.vercel.app/sorting?sortOrder=${sortOrder}`,
+        );
+        setAllVisaData(response.data);
+      } catch (error) {
+        console.error("Error fetching visas:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchVisas();
   }, [sortOrder]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen pb-24 ${theme === 'dark' ? 'bg-themeDatak' : 'bg-slate-50'}`}>

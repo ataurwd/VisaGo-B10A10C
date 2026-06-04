@@ -16,7 +16,7 @@ const HomeHeading = () => {
       title: "Your Journey Starts with a Single Step",
       subtitle: "Welcome to VisaGo",
       description: "Simplify your global travel with our lightning-fast visa processing. Secure, transparent, and built for the modern traveler.",
-      bgImage: "https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?auto=format&fit=crop&q=80&w=2000",
+      bgImage: "https://media.cntraveller.com/photos/611befd2ae2ff768cb25326d/16:9/w_1280,c_limit/turkey.jpg",
       icon: <Globe className="w-6 h-6" />,
     },
     {
